@@ -1118,8 +1118,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 807533601}
-        m_TargetAssemblyTypeName: NetworkPlayerDespawner, Assembly-CSharp
+      - m_Target: {fileID: 1217043453}
+        m_TargetAssemblyTypeName: InstanceBridge, Assembly-CSharp
         m_MethodName: LoadGame
         m_Mode: 1
         m_Arguments:
@@ -1184,7 +1184,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &807533600
 Transform:
   m_ObjectHideFlags: 0
@@ -2077,7 +2077,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1217043452
 Transform:
   m_ObjectHideFlags: 0
@@ -3319,8 +3319,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 807533601}
-        m_TargetAssemblyTypeName: NetworkPlayerDespawner, Assembly-CSharp
+      - m_Target: {fileID: 1217043453}
+        m_TargetAssemblyTypeName: InstanceBridge, Assembly-CSharp
         m_MethodName: Despawn
         m_Mode: 1
         m_Arguments:
