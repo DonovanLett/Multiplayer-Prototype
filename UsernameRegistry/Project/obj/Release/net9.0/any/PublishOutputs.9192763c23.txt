@@ -1,0 +1,8 @@
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\UsernameRegistry.dll
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\UsernameRegistry.deps.json
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\UsernameRegistry.pdb
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\Unity.Services.CloudCode.Apis.dll
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\Unity.Services.CloudCode.Core.dll
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\dlett_eulpdps\AppData\Local\Temp\UsernameRegistry\module-compilation-cross-platform\Newtonsoft.Json.dll
