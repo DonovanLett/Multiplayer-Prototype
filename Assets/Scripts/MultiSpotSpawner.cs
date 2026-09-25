@@ -56,8 +56,27 @@ public class MultiSpotSpawner : MonoBehaviour
                 "MultiSpotSpawner: The NetworkManager's SceneManager doesn't exist."
             );
         }
-        
+
         ////
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+
+        Debug.Log(
+            "[MultiSpotSpawner] Subscribed to OnClientConnectedCallback."
+        );
+
+    }
+
+    private void OnClientConnected(ulong clientId)
+    {
+        NetworkClient client = NetworkManager.Singleton.ConnectedClients[clientId];
+
+        Debug.Log(
+            $"[MultiSpotSpawner] OnClientConnected | " +
+            $"ClientId = {clientId} | " +
+            $"Active Scene = {SceneManager.GetActiveScene().name} | " +
+            $"PlayerObject = {(client.PlayerObject != null ? "EXISTS" : "NULL")} | " +
+            $"ConnectedClientsIds.Count = {NetworkManager.Singleton.ConnectedClientsIds.Count}"
+        );
     }
 
     private void Start()
@@ -99,10 +118,14 @@ public class MultiSpotSpawner : MonoBehaviour
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnGameSceneLoaded;
         }
 
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+
         if (Instance == this)
         {
             Instance = null;
         }
+
+        // NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
     }
 
     private void OnGameSceneLoaded(
@@ -115,11 +138,55 @@ public class MultiSpotSpawner : MonoBehaviour
         if (sceneName != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name)
             return;
 
+        // New
+        Debug.Log(
+    $"[MultiSpotSpawner] Game Scene finished loading. " +
+    $"ConnectedClientsIds.Count = {NetworkManager.Singleton.ConnectedClientsIds.Count}, " +
+    $"clientsCompleted.Count = {clientsCompleted.Count}, " +
+    $"clientsTimedOut.Count = {clientsTimedOut.Count}"
+);
+
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            NetworkClient client = NetworkManager.Singleton.ConnectedClients[clientId];
+
+            Debug.Log(
+                $"[MultiSpotSpawner] Connected Client {clientId} | " +
+                $"PlayerObject = {(client.PlayerObject != null ? "EXISTS" : "NULL")}"
+            );
+        }
+
+        Debug.Log("[MultiSpotSpawner] clientsCompleted:");
+
+        foreach (ulong clientId in clientsCompleted)
+        {
+            Debug.Log(
+                $"[MultiSpotSpawner] Scene-load completed for Client {clientId}."
+            );
+        }
+
+        Debug.Log("[MultiSpotSpawner] clientsTimedOut:");
+
+        foreach (ulong clientId in clientsTimedOut)
+        {
+            Debug.Log(
+                $"[MultiSpotSpawner] Scene-load timed out for Client {clientId}."
+            );
+        }
+
+        SpawnPlayersInACircle(
+            new Vector3(0, 0.5700001f, 0),
+            3.25f,
+            0f
+        );
+        // New
+        /*
         Debug.Log("Game Scene finished loading. Waiting for PlayerObjects...");
 
         //SpawnPlayers();
         SpawnPlayersInACircle(new Vector3(0, 0.5700001f, 0), 3.25f, 0f);
         //StartCoroutine(WaitForPlayersAndSpawn());
+        */
     }
 
     private void SpawnPlayers()

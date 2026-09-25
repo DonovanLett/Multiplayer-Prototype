@@ -18,6 +18,8 @@ public class NetworkSceneManager : MonoBehaviour
     private string _lobbyScene; // "Originally "LobbyScene";
     [SerializeField] 
     private string _gameScene;
+    [SerializeField]
+    private bool _gameStarted = false;
 
     /*// Controlling which Players cane enter code
     [Header("Other Variables")]
@@ -67,6 +69,42 @@ public class NetworkSceneManager : MonoBehaviour
     NetworkManager.ConnectionApprovalRequest request,
     NetworkManager.ConnectionApprovalResponse response)
     {
+        UnityEngine.Debug.Log(
+            $"ApprovalCheck is called. Game Started: {_gameStarted}"
+        );
+
+        if (_gameStarted)
+        {
+            response.Approved = false;
+            response.CreatePlayerObject = false;
+            response.Pending = false;
+            response.Reason = "The game has already started.";
+
+            /*
+            UnityEngine.Debug.Log(
+                "[NetworkSceneManager] Connection rejected: Game has already started."
+            );
+            UnityEngine.Debug.Log(
+        "The Round started just as you were attempting to connect. Bummer! ):"
+    );*/
+
+            return;
+        }
+
+        response.Approved = true;
+        response.CreatePlayerObject = false;
+        response.Pending = false;
+
+        UnityEngine.Debug.Log(
+            "[NetworkSceneManager] Connection approved."
+        );
+    }
+
+    /*
+    private void ApprovalCheck(
+    NetworkManager.ConnectionApprovalRequest request,
+    NetworkManager.ConnectionApprovalResponse response)
+    {
         /*
         // Controlling which Players cane enter code
         if (gameStarted.Value)
@@ -76,7 +114,7 @@ public class NetworkSceneManager : MonoBehaviour
             return;
         }
         // Controlling which Players cane enter code
-        */
+        
 
         response.Approved = true;
 
@@ -85,7 +123,7 @@ public class NetworkSceneManager : MonoBehaviour
 
         response.Pending = false;
         UnityEngine.Debug.Log("ApprovalCheck is called.");
-    }
+    }*/
 
     private void OnEnable()
     {
@@ -184,6 +222,32 @@ public class NetworkSceneManager : MonoBehaviour
     }
     */
 
+    private async void OnClientDisconnect(ulong clientId)
+    {
+        if (NetworkManager.Singleton == null)
+            return;
+
+        if (clientId != NetworkManager.Singleton.LocalClientId)
+            return;
+
+        string disconnectReason =
+            NetworkManager.Singleton.DisconnectReason;
+
+        UnityEngine.Debug.Log("LOCAL CLIENT DISCONNECTED");
+
+        if (!string.IsNullOrEmpty(disconnectReason))
+        {
+            UnityEngine.Debug.Log(
+                $"[NetworkSceneManager] Disconnect Reason: {disconnectReason}"
+            );
+        }
+
+        await LeaveSession();
+
+        LoadMainMenu();
+    }
+
+    /*
     private async void OnClientDisconnect(ulong clientId) // Works
     {
         if (NetworkManager.Singleton == null)
@@ -198,12 +262,27 @@ public class NetworkSceneManager : MonoBehaviour
 
         LoadMainMenu();
     }
+    */
 
     private void LoadMainMenu()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(_mainMenuScene);
     }
 
+    public async void LoadGame()
+    {
+        // Immediately prevent new connection approvals.
+        _gameStarted = true;
+
+        await SessionInfoController.Instance.SetSessionLocked(true);
+
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            _gameScene,
+            LoadSceneMode.Single
+        );
+    }
+
+    /*
     public void LoadGame() // Make this proper
     {
         SessionInfoController.Instance.SetSessionLocked(true); // Added code
@@ -211,8 +290,27 @@ public class NetworkSceneManager : MonoBehaviour
     _gameScene,
     LoadSceneMode.Single
 );
+    }*/
+
+
+    public async void ReturnToLobby()
+    {
+        // The round has ended; allow new Clients to connect again.
+        _gameStarted = false;
+
+        DespawnAllPlayers();
+
+        await SessionInfoController.Instance.SetSessionLocked(false);
+
+        UnityEngine.Debug.Log($"Lobby Scene Name: '{_lobbyScene}'");
+
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            _lobbyScene,
+            LoadSceneMode.Single
+        );
     }
 
+    /*
     public void ReturnToLobby() // Make this Proper
     {
         DespawnAllPlayers();
@@ -222,7 +320,7 @@ public class NetworkSceneManager : MonoBehaviour
     "SampleScene",
     LoadSceneMode.Single
 );
-        */
+        
         SessionInfoController.Instance.SetSessionLocked(false); // Added code (maybe put this after "Load Lobby")
         UnityEngine.Debug.Log($"Lobby Scene Name: '{_lobbyScene}'");
 
@@ -233,7 +331,7 @@ public class NetworkSceneManager : MonoBehaviour
         //SessionInfoController.Instance.SetSessionLocked(false); // Added code (maybe put this before "Load Lobby"
 
         // gameStarted.Value = false; // BLIP CODE
-    }
+    }/////*/
 
     private void DespawnAllPlayers()
     {
