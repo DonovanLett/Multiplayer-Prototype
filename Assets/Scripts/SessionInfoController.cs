@@ -79,6 +79,39 @@ public class SessionInfoController : MonoBehaviour
         }
     }
 
+    public async void SetSessionLocked(bool locked)
+    {
+        if (CurrentSession == null)
+        {
+            Debug.LogWarning("[SessionInfoController] No current Session.");
+            return;
+        }
+
+        if (!CurrentSession.IsHost)
+        {
+            Debug.LogWarning(
+                "[SessionInfoController] Only the Host can lock or unlock the Session."
+            );
+            return;
+        }
+
+        IHostSession hostSession = CurrentSession.AsHost();
+
+        hostSession.IsLocked = locked;
+
+        Debug.Log(
+            $"[SessionInfoController] Session lock state set locally to: {hostSession.IsLocked}"
+        );
+
+        await hostSession.SavePropertiesAsync();
+
+        Debug.Log(
+            $"[SessionInfoController] Session lock state saved: {hostSession.IsLocked}"
+        );
+    }
+
+
+    /*
     public void SetSessionLocked(bool locked)
     {
         if (CurrentSession == null)
