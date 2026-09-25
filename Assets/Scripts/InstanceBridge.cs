@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class InstanceBridge : MonoBehaviour
 {
-    public void Despawn()
+    public void LeaveGame()
     {
         Debug.Log("Despawner Called");
         NetworkSceneManager networkSceneManager = NetworkSceneManager.Instance;
